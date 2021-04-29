@@ -1,0 +1,185 @@
+/* this version of the employee table definitions (p 91 of Elmasri-Navathe 6th ed)
+ * uses the ALTER TABLE option so that foreign key declarations do not precede
+ * the relevant table definition
+ *
+ * Also, tabs were eliminated for easier copy/paste
+ *
+ * if things get wedged, foreign-key constraints can be DROPPED:
+ * alter table employee DROP foreign key dno;
+ *
+ * if things get REALLY wedged, 
+ *  drop database plddb;
+ */
+use project;
+
+create table team  (
+        teamID			   int                 not null,
+        schoolname         varchar(15)         not null,
+        mascot             varchar(15)         not null,
+        sponsor            varchar(15)         not null,
+    primary key (teamID)
+) ;
+
+create table player (
+        fname             varchar(15)         not null,
+        lname             varchar(15)         not null,
+        playerID            int               not null,
+        height         	  char(9), 
+        teamID             int, 
+        PPG            	  decimal(4,1),
+        scoring_percent   decimal(3,3),
+    primary key (playerID),
+    foreign key (teamID) references team(teamID)
+) ;
+
+create table arena  (
+        name         	  varchar(20)         not null,
+        location          varchar(20)         not null,
+        capacity          int             	  not null,
+    primary key (name)
+) ;
+
+create table coach  (
+		coachID            int             	  not null,
+		fname             varchar(15)         not null,
+        lname             varchar(15)         not null,
+        teamID			  int,
+    primary key (coachID),
+    foreign key (teamID) references team(teamID)
+) ;
+
+create table trainer  (
+        trainerID          int             	  not null,        
+		fname             varchar(15)         not null,
+        lname             varchar(15)         not null,
+        teamID			  int,
+    primary key (trainerID),
+    foreign key (teamID) references team(teamID)
+) ;
+
+create table game (
+        gameID               int                 not null	auto_increment,
+        team1               int                 not null,
+        team2               int			not null,
+	ref		int			not null,
+		date           		DATE,  
+		winner				varchar(120),					not null,
+		arena				varchar(20),
+		tickets             int,
+    primary key (gameID),
+    foreign key (team1) references team(teamID),
+    foreign key (team2) references team(teamID),
+	foreign key(ref)references referee(refID),
+	foreign key(arena) references arena(name),
+) ;
+
+create table referee  (
+        refID              int             	  not null,
+        fname             varchar(15)         not null,
+        lname             varchar(15)         not null,
+    primary key (refID),
+) ;
+
+ 
+ INSERT INTO team
+(teamID, schoolname, mascot, sponsor)
+values
+(101, 'Michigan', 'Wolverines', 'Nike'),
+(102, 'Loyola Chicago', 'Ramblers', 'Nike'),
+(103, 'Illinois', 'Kingfisher', 'Adidas'),
+(104, 'Gonzaga', 'Bulldogs', 'Under Armour'),
+(105, 'Baylor', 'Bears', 'Adidas'),
+(106, 'Alabama', 'Roll Tide', 'Under Armour');
+
+INSERT INTO player
+(fname, lname, playerID, height, teamID, PPG, scoring_percent)
+values
+('Hunter', 'Dickinson', 1, '7,1', 101, 14.2, .679),
+('Cameron', 'Krutwig', 2, '6,9', 102, 15, .627),
+('Mike', 'Smith', 3, '5,11', 101, 9.1, .564),
+('Franz', 'Wagner', 4, '6,9', 101, 12.8, .573),
+('Ayo', 'Dosunmu', 5, '6,5', 103, 20.6, .552),
+('Jared', 'Butler', 6, '6,3', 105, 17, .56),
+('Isaiah', 'Livers', 7, '6,7', 101, 13.1, .586),
+('Lucas', 'Williamson', 8, '6,4', 102, 8.2, .526),
+('Andrew', 'Nembhard', 9, '6,5', 104, 9.2, .541),
+('Kofi', 'Cockburn', 10, '7,0', 103, 17.6, .599),
+('Braden', 'Norris', 11, '6,0', 102, 8.1, .555),
+('Trent', 'Frazier', 12, '6,2', 103, 10.4, .539),
+('Eli', 'Brooks', 13, '6,1', 101, 9.1, .584),
+('Jaden', 'Shackelford', 14, '6,3', 106, 14.2, .499),
+('Jahvon', 'Quinerly', 15, '6,1', 106, 12.7, .55),
+('Aher', 'Uguak', 16, '6,7', 102, 7.6, .573),
+('Andre', 'Curbelo', 17, '6,1', 103, 9.1, .465),
+('Macio', 'Teague', 18, '6,4', 105, 16.4, .578),
+('Keith', 'Clemons', 19, '6,1', 102, 7.4, .555),
+('Corey', 'Kispert', 20, '6,7', 104, 19.2, .629),
+('Drew', 'Timme', 21, '6,10', 104, 18.7, .553),
+('John', 'Petty Jr.', 22, '6,5', 106, 12.3, .522),
+('Herbert', 'Jones', 23, '6,8', 106, 11.2, .519),
+('Adam', 'Miller', 24, '6,3', 103, 8.3, .468),
+('Davion', 'Mitchell', 25, '6,2', 105, 14, .432),
+('Jalen', 'Suggs', 26, '6,4', 104, 14.3, .535),
+('Joshua', 'Primo', 27, '6,6', 106, 8.1, .539),
+('Joel', 'Ayayi', 28, '6,5', 104, 11.8, .587),
+('Adam', 'Flagler', 29, '6,3', 105, 8.8, .549),
+('Matthew', 'Mayer', 30, '6,9', 105, 8, .492);
+
+
+INSERT INTO coach 
+(coachID, fname, lname, teamID)
+values
+(301, 'Scott','Drew', 105),
+(302, 'Brad','Underwood', 103),
+(303, 'Porter','Moser', 102),
+(304, 'Juawn','Howard', 101),
+(305, 'Mark','Few', 104),
+(306, 'Nate','Oats', 106);
+
+INSERT INTO trainer
+(trainerID, fname, lname, teamID)
+values
+(201, 'Alex','Wong', 101),
+(202, 'Clark','Holter', 106),
+(203, 'Paul','Schmidt', 103),
+(204, 'Corey','Oshikoya', 102),
+(205, 'Dave','Snyder', 105),
+(206, 'Josh','Terrien', 104);
+
+INSERT INTO referee
+(refID, fname, lname)
+values
+(401, 'Roger', 'Ayers'),
+(402, 'Mike', 'Eades'),
+(403, 'Ted', 'Valentine'),
+(404, 'Verne', 'Harris'),
+(405, 'John', 'Higgins'),
+(406, 'Mike', 'Stephens'),
+(407, 'Brian', 'Dorsey'),
+(408, 'Ron', 'Groover'),
+(409, 'Jamie', 'Luckie'),
+(410, 'AJ', 'Desai'),
+(411, 'Bill', 'Convington Jr.'),
+(412, 'Bert', 'Smith');
+
+INSERT INTO arena
+(name, location, capacity)
+values
+('Crisler Center', 'Ann Arbor, MI', '12707'),
+('Gentile Arena', 'Chicago, IL', '4486'),
+('Rupp Arena', 'Lexington, KY', '23500'),
+('Cintas Center', 'Cincinnati, OH', '10250'),
+('Pauley Pavilion', 'Los Angeles, CA', '13800');
+
+INSERT INTO game
+(team1, team2, ref, date, winner, arena, tickets)
+values
+( 101, 102, 401, '2021-3-20', 'Michigan', 'Crisler Center', 12000),
+( 103, 104, 408, '2021-3-20', 'Gonzaga', 'Rupp Arena', 17585),
+( 105, 106, 406, '2021-3-23', 'Alabama', 'Pauley Pavilion', 10364),
+( 101, 105, 403, '2021-3-25', 'Michigan', 'Pauley Pavilion', 12584),
+( 102, 104, 410, '2021-3-28', 'Illinois', 'Gentile Arena', 3685),
+( 103, 106, 412, '2021-3-30', 'Gonzaga', 'Cintas Center', 9643);
+
+
+
